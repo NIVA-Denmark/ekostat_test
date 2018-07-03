@@ -155,6 +155,12 @@ OxygenTest2 <- function(df) {
   O2_test2_yearmeans <- left_join(years,O2_test2_yearmeans,c("year"))
   # Calculate indicator for percent area affected by <3.5 ml/l
   df2 <- O2bottom %>% mutate(month = lubridate::month(date),year = lubridate::year(date)) %>% filter(month %in% c(6,7,8,9,10,11,12))
+  # Return from function if no observations available (Jun-Dec) for calculation of hypoxic area
+  if (nrow(df2) == 0) {
+    yearmeans <- df %>% group_by(year) %>% summarise(xvar = NA)  # Return NA values in res
+    res <- list(periodmean=NA,yearmeans=yearmeans,error_code=-92)
+    return(list(error_code=-92))
+  }
   hyparea <- mean(df2$area_hyp)
   hyparea_yearmeans <- df2 %>% group_by(year) %>% summarise(area_hyp = mean(area_hyp))
   # Calculate EQR from Table 7.1 in Handbook
@@ -314,6 +320,8 @@ CalculateIndicator <-
     alpha <- df %>% group_by(year) %>% summarise(mean = mean(g_fun(xvar),na.rm=TRUE))
 # Calculate indicator
     mu_indicator <- f_fun(df)
+    # Return from function if no observations in Jan-May (result_code=-91) or Jun-Dec (result_code=-92)
+    if (mu_indicator$error_code != 0) return(list(result_code=mu_indicator$error_code))
 # Simulate system with random variables for estimating the variance of the indicator
     simres <- vector("numeric",n_iter)
     simresyear <- matrix(nrow=ndf$n_year,ncol=n_iter)
