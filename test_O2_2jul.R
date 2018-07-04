@@ -15,8 +15,8 @@ source("IndicatorFunctions.R")
 # ------------load monitoring data for testing ------------ 
 load("dftest.Rda")
 
-WBselected<-"SE554500-125001"
-typology<-"6"
+WBselected<-"SE563000-123351"
+typology<-"5"
 Ind<-"CoastOxygen"
 MeasuredVar<-"Oxygen"
 MonthInclude <- c(1,2,3,4,5,6,7,8,9,10,11,12)
